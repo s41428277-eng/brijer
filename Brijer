@@ -1,0 +1,305 @@
+<!DOCTYPE html>  <html lang="uk">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">  
+<title>BRIJER TYCOON HARDCORE</title>  
+<style>  
+*{box-sizing:border-box}  
+body{margin:0;background:#101010;color:#fff;font-family:Arial,sans-serif;padding-bottom:85px}  
+header{padding:17px;text-align:center;background:linear-gradient(135deg,#30200a,#090909);border-bottom:2px solid #d9a52b}  
+header h1{margin:0;color:#ffdc72;letter-spacing:3px}  
+header small{color:#aaa}  
+.balance{text-align:center;font-size:28px;font-weight:bold;color:#ffdc72;margin:20px 0 5px;overflow-wrap:anywhere}  
+.sub{text-align:center;color:#aaa;font-size:13px}  
+.coin{width:180px;height:180px;margin:24px auto;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle at 30% 22%,#fffbd0,#ffe678 13%,#efb62f 36%,#b66b0b 66%,#ffe27b 80%,#995807);box-shadow:0 0 0 5px #93651b,0 0 0 9px #f5cf63,0 16px 0 #714307,0 23px 35px #000b,0 0 30px #ffcb4740;color:#603500;user-select:none;touch-action:manipulation;cursor:pointer}  
+.coin b{font-size:75px;text-shadow:2px 3px 0 #ffdf71}  
+.coin span{font-size:12px;font-weight:bold;letter-spacing:3px}  
+.coin:active{transform:translateY(5px)}  
+.stats{display:flex;gap:8px;padding:0 12px}  
+.stat{flex:1;min-width:0;background:#1d1d1d;border:1px solid #3b3020;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;color:#aaa}  
+.stat b{display:block;color:#ffdc72;font-size:15px;margin-top:5px;overflow-wrap:anywhere}  
+button{border:0;border-radius:9px;padding:12px;background:linear-gradient(135deg,#ffdc72,#c88a17);color:#241600;font-weight:bold;font-size:13px;cursor:pointer}  
+button:disabled{opacity:.35}  
+.mainbtn{display:block;margin:16px auto;width:90%;max-width:400px}  
+.section{display:none;padding:15px}  
+.section.active{display:block}  
+h2{color:#ffdc72;font-size:20px}  
+.card{background:linear-gradient(135deg,#242424,#151515);border:1px solid #4b3b20;border-radius:12px;padding:14px;margin:10px 0}  
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}  
+.row h3{flex:1}  
+.card h3{margin:0 0 7px;font-size:16px}  
+.card p{margin:5px 0;color:#aaa;font-size:13px}  
+.price{color:#ffdc72;font-weight:bold;margin:8px 0}  
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#111;border-top:1px solid #493819;padding:7px 2px calc(7px + env(safe-area-inset-bottom));z-index:10}  
+nav button{flex:1;min-width:0;margin:0 2px;padding:11px 2px;background:#222;color:#aaa;font-size:10px}  
+nav button.active{background:linear-gradient(135deg,#ffdc72,#b8780d);color:#211500}  
+.note{color:#999;font-size:12px;line-height:1.5}  
+#notice{text-align:center;color:#ff7777;font-size:13px;min-height:18px}  
+input{width:100%;padding:13px;margin:8px 0;background:#101010;border:1px solid #70551e;border-radius:8px;color:white;font-size:14px}  
+#discordSetup{position:fixed;inset:0;background:#000e;z-index:100;display:none;align-items:center;justify-content:center;padding:18px}  
+#discordSetup .box{width:100%;max-width:420px;background:#1b1b1b;border:1px solid #d9a52b;border-radius:15px;padding:20px}  
+#discordSetup h2{margin-top:0}  
+#discordStatus{font-size:12px;color:#aaa;line-height:1.5}  
+.discordButton{width:100%;margin-top:8px}  
+#discordSettings{position:fixed;right:12px;bottom:85px;z-index:20;width:43px;height:43px;border-radius:50%;font-size:19px;padding:0}  
+</style>  
+</head>  
+<body>  <header>  
+<h1>BRIJER</h1>  
+<small>TYCOON · HARDCORE</small>  
+</header>  <div id="home" class="section active">  
+<div class="balance" id="money">₴ 0</div>  
+<div class="sub">Твій капітал</div>  
+<div class="coin" onclick="tap()"><b>₿</b><span>BRIJER</span></div>  
+<div id="notice"></div>  
+<div class="stats">  
+<div class="stat">За клік<b id="tapPower">₴ 2</b></div>  
+<div class="stat">За хвилину<b id="income">₴ 0</b></div>  
+<div class="stat">Бізнеси<b id="businessCount">0</b></div>  
+</div>  
+<button class="mainbtn" onclick="buyTapUpgrade()">⚡ ПОКРАЩИТИ КЛІК — <span id="tapPrice">₴ 1 000</span></button>  
+<p class="note" style="text-align:center">Натискай на монету, купуй бізнеси та розвивай свою імперію.</p>  
+</div>  <div id="businesses" class="section">  
+<h2>🏢 Бізнеси</h2>  
+<div id="businessList"></div>  
+</div>  <div id="accessories" class="section">  
+<h2>💎 Аксесуари</h2>  
+<p class="note">Кожен аксесуар купується один раз.</p>  
+<div id="accessoryList"></div>  
+</div>  <div id="upgrades" class="section">  
+<h2>⚡ Покращення</h2>  
+<div id="boostList"></div>  
+</div>  <div id="profile" class="section">  
+<h2>👤 Профіль</h2>  
+<div class="card">  
+<h3>BRIJER TYCOON</h3>  
+<p>Режим: HARDCORE</p>  
+<p>Капітал: <b id="profileMoney">₴ 0</b></p>  
+<p>Сила кліку: <b id="profileTap">₴ 2</b></p>  
+<p>Бізнесів куплено: <b id="profileBusinesses">0</b></p>  
+<p>Аксесуарів: <b id="profileAccessories">0</b></p>  
+<p>Усього кліків: <b id="profileTaps">0</b></p>  
+</div>  
+<button class="mainbtn" onclick="saveGame();showNotice('✅ Прогрес збережено!')">💾 ЗБЕРЕГТИ ГРУ</button>  
+</div>  <nav>  
+<button class="active" onclick="showTab('home',this)">🪙 Головна</button>  
+<button onclick="showTab('businesses',this)">🏢 Бізнеси</button>  
+<button onclick="showTab('accessories',this)">💎 Аксесуари</button>  
+<button onclick="showTab('upgrades',this)">⚡ Покращення</button>  
+<button onclick="showTab('profile',this)">👤 Профіль</button>  
+</nav>  <button id="discordSettings" onclick="openDiscordSettings()" title="Discord">⚙️</button>
+
+<div id="discordSetup">  
+<div class="box">  
+<h2>🔗 Discord підключення</h2>  
+<p class="note">Встав URL вебхука Discord. Після збереження гра надсилатиме звіт щохвилини.</p>  
+<input id="discordWebhookInput" type="url" placeholder="Встав Discord Webhook URL">  
+<div id="discordStatus">Вебхук ще не налаштований.</div>  
+<button class="discordButton" onclick="saveDiscordWebhook()">💾 ЗБЕРЕГТИ ВЕБХУК</button>  
+<button class="discordButton" onclick="testDiscordWebhook()">📨 ТЕСТОВИЙ ЗВІТ</button>  
+<button class="discordButton" onclick="removeDiscordWebhook()" style="background:#713333;color:white">🗑 ВИДАЛИТИ ВЕБХУК</button>  
+<button class="discordButton" onclick="closeDiscordSettings()" style="background:#333;color:white">ЗАКРИТИ</button>  
+</div>  
+</div>  <script>  
+const businesses=[  
+['Маленький кіоск',50,4],['Кавʼярня',600,30],['Магазин',6000,200],  
+['Автомийка',45000,1200],['Ресторан',375000,8000],['Готель',3000000,50000],  
+['АЗС',25000000,360000],['Супермаркет',200000000,2400000],  
+['Завод',1750000000,16000000],['Банк',15000000000,120000000],  
+['Автосалон',125000000000,800000000],['IT-компанія',1e12,6000000000],  
+['Хмарочос',7.5e12,4e10],['Авіакомпанія',5e13,3e11],  
+['Нафтова компанія',4e14,2e12],['Медіахолдинг',3e15,1.4e13],  
+['Космічна компанія',2.5e16,1e14],['Мегакорпорація',2e17,8e14],  
+['Світова імперія',1.5e18,6e15],['BRIJER GROUP',5e19,4e17]  
+];  
+  
+const accessories=[  
+{id:'gloves',name:'🧤 Золоті рукавички',desc:'+20% доходу від кліків',price:12500,type:'tap',bonus:.2},  
+{id:'briefcase',name:'💼 Портфель інвестора',desc:'+20% доходу бізнесів',price:75000,type:'business',bonus:.2},  
+{id:'crown',name:'👑 Корона BRIJER',desc:'+40% до всіх доходів',price:1250000,type:'all',bonus:.4}  
+];  
+  
+const boosts=[  
+{id:'tap',name:'🖱️ Суперклік',desc:'Сила кліку ×2 за рівень',price:1000,type:'tap'},  
+{id:'business',name:'🏢 Бізнес-стратегія',desc:'+20% доходу бізнесів за рівень',price:25000,type:'business'},  
+{id:'all',name:'💰 Золота імперія',desc:'+40% до всіх доходів за рівень',price:250000,type:'all'}  
+];  
+  
+let data={coins:0,taps:0,power:2,tapLevel:1,owned:{},upgrades:{},accessories:{},boosts:{},last:Date.now()};  
+  
+function loadGame(){  
+try{  
+const old=JSON.parse(localStorage.getItem('brijer_save'));  
+if(old)data={...data,...old,owned:old.owned||{},upgrades:old.upgrades||{},accessories:old.accessories||{},boosts:old.boosts||{}};  
+}catch(e){}  
+const elapsed=Math.min(8*60*60,Math.max(0,(Date.now()-(data.last||Date.now()))/1000));  
+data.coins+=getIncomeMinute()/60*elapsed;  
+data.last=Date.now();  
+}  
+function saveGame(){  
+data.last=Date.now();  
+try{localStorage.setItem('brijer_save',JSON.stringify(data));}catch(e){}  
+}  
+function fmt(n){  
+if(!Number.isFinite(n))return '∞';  
+if(n<1000)return Math.floor(n).toLocaleString('uk-UA');  
+const units=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc','No'];let i=0;  
+while(n>=1000&&i<units.length-1){n/=1000;i++}  
+return n.toLocaleString('uk-UA',{maximumFractionDigits:2})+' '+units[i];  
+}  
+function countAccessories(){return Object.values(data.accessories).filter(Boolean).length;}  
+function multiplier(type){  
+let m=1;  
+accessories.forEach(a=>{if(data.accessories[a.id]&&(a.type===type||a.type==='all'))m+=a.bonus;});  
+boosts.forEach(b=>{if(b.type===type||b.type==='all')m+=(data.boosts[b.id]||0)*(b.type==='all'?.4:.2);});  
+return m;  
+}  
+function getIncomeMinute(){  
+let sum=0;  
+businesses.forEach((b,i)=>{sum+=b[2]*(data.owned[i]||0)*Math.pow(2,data.upgrades[i]||0);});  
+return sum*2*multiplier('business')*multiplier('all');  
+}  
+function getTapPower(){return data.power*2*multiplier('tap')*multiplier('all');}  
+function tap(){data.coins+=getTapPower();data.taps++;update();}  
+function buyTapUpgrade(){  
+const price=1000*Math.pow(4,data.tapLevel-1);  
+if(data.coins<price)return;  
+data.coins-=price;data.tapLevel++;data.power*=2;update();  
+}  
+function buyBusiness(i){  
+const b=businesses[i],price=b[1]*Math.pow(5,data.owned[i]||0);  
+if(data.coins<price)return;  
+data.coins-=price;data.owned[i]=(data.owned[i]||0)+1;update();  
+}  
+function upgradeBusiness(i){  
+const level=data.upgrades[i]||0,price=businesses[i][1]*2*Math.pow(4,level);  
+if(data.coins<price)return;  
+data.coins-=price;data.upgrades[i]=level+1;update();  
+}  
+function buyAccessory(id){  
+const a=accessories.find(x=>x.id===id);  
+if(!a||data.accessories[id]||data.coins<a.price)return;  
+data.coins-=a.price;data.accessories[id]=true;update();  
+}  
+function buyBoost(id){  
+const b=boosts.find(x=>x.id===id),level=data.boosts[id]||0,price=b.price*Math.pow(3,level);  
+if(data.coins<price)return;  
+data.coins-=price;data.boosts[id]=level+1;update();  
+}  
+function renderBusinesses(){  
+document.getElementById('businessList').innerHTML=businesses.map((b,i)=>{  
+const count=data.owned[i]||0,level=data.upgrades[i]||0;  
+const price=b[1]*Math.pow(5,count),up=b[1]*2*Math.pow(4,level);  
+return `<div class="card"><div class="row"><h3>${b[0]}</h3><b>×${count}</b></div>  
+<p>Базовий дохід: ₴ ${fmt(b[2]*2)}/хв</p><p>Рівень покращення: ${level}</p>  
+<div class="price">Купівля: ₴ ${fmt(price)}</div>  
+<div class="row"><button onclick="buyBusiness(${i})" ${data.coins<price?'disabled':''}>Купити</button>  
+<button onclick="upgradeBusiness(${i})" ${data.coins<up?'disabled':''}>Покращити · ₴ ${fmt(up)}</button></div></div>`;  
+}).join('');  
+}  
+function renderAccessories(){  
+document.getElementById('accessoryList').innerHTML=accessories.map(a=>{  
+const owned=!!data.accessories[a.id];  
+return `<div class="card"><h3>${a.name}</h3><p>${a.desc}</p>  
+<div class="price">${owned?'✅ Куплено':'Ціна: ₴ '+fmt(a.price)}</div>  
+<button onclick="buyAccessory('${a.id}')" ${owned||data.coins<a.price?'disabled':''}>${owned?'Придбано':'Купити'}</button></div>`;  
+}).join('');  
+}  
+function renderBoosts(){  
+document.getElementById('boostList').innerHTML=boosts.map(b=>{  
+const level=data.boosts[b.id]||0,price=b.price*Math.pow(3,level);  
+return `<div class="card"><h3>${b.name}</h3><p>${b.desc}</p><p>Поточний рівень: ${level}</p>  
+<div class="price">Ціна: ₴ ${fmt(price)}</div>  
+<button onclick="buyBoost('${b.id}')" ${data.coins<price?'disabled':''}>Покращити</button></div>`;  
+}).join('');  
+}  
+function showTab(id,btn){  
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));  
+document.getElementById(id).classList.add('active');  
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));  
+btn.classList.add('active');update();  
+}  
+function showNotice(message){document.getElementById('notice').textContent=message;}  
+function update(){  
+document.getElementById('money').textContent='₴ '+fmt(data.coins);  
+document.getElementById('tapPower').textContent='₴ '+fmt(getTapPower());  
+document.getElementById('income').textContent='₴ '+fmt(getIncomeMinute());  
+document.getElementById('businessCount').textContent=Object.values(data.owned).reduce((a,b)=>a+b,0);  
+document.getElementById('tapPrice').textContent='₴ '+fmt(1000*Math.pow(4,data.tapLevel-1));  
+document.getElementById('profileMoney').textContent='₴ '+fmt(data.coins);  
+document.getElementById('profileTap').textContent='₴ '+fmt(getTapPower());  
+document.getElementById('profileBusinesses').textContent=Object.values(data.owned).reduce((a,b)=>a+b,0);  
+document.getElementById('profileAccessories').textContent=countAccessories();  
+document.getElementById('profileTaps').textContent=fmt(data.taps);  
+renderBusinesses();renderAccessories();renderBoosts();saveGame();  
+}  
+  
+/* DISCORD: вебхук задається самим гравцем у вікні налаштувань */  
+let discordTimer=null;  
+function openDiscordSettings(){  
+document.getElementById('discordSetup').style.display='flex';  
+document.getElementById('discordWebhookInput').value=localStorage.getItem('brijer_discord_webhook')||'';  
+refreshDiscordStatus();  
+}  
+function closeDiscordSettings(){document.getElementById('discordSetup').style.display='none';}  
+function refreshDiscordStatus(){  
+const connected=!!localStorage.getItem('brijer_discord_webhook');  
+document.getElementById('discordStatus').textContent=connected?  
+'✅ Вебхук збережено. Звіти надсилатимуться приблизно раз на хвилину.':  
+'Вебхук ще не налаштований.';  
+}  
+function saveDiscordWebhook(){  
+const url=document.getElementById('discordWebhookInput').value.trim();  
+if(!/^https:\/\/discord\.com\/api\/webhooks\/\d+\/[\w-]+$/.test(url)){  
+document.getElementById('discordStatus').textContent='❌ Перевір адресу вебхука Discord.';  
+return;  
+}  
+localStorage.setItem('brijer_discord_webhook',url);  
+refreshDiscordStatus();  
+sendDiscordReport();  
+}  
+function removeDiscordWebhook(){  
+localStorage.removeItem('brijer_discord_webhook');  
+document.getElementById('discordWebhookInput').value='';  
+refreshDiscordStatus();  
+}  
+function sendDiscordReport(){  
+const url=localStorage.getItem('brijer_discord_webhook');  
+if(!url)return;  
+const report={  
+username:'BRIJER TYCOON',  
+content:'📊 **BRIJER TYCOON — ЗВІТ**\n'+  
+'💰 Баланс: ₴ '+fmt(data.coins)+'\n'+  
+'🖱️ Кліків: '+fmt(data.taps)+'\n'+  
+'🏢 Бізнесів: '+Object.values(data.owned).reduce((a,b)=>a+b,0)+'\n'+  
+'💵 Дохід/хв: ₴ '+fmt(getIncomeMinute())+'\n'+  
+'🕒 Час: '+new Date().toLocaleString()  
+};  
+fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(report)})  
+.then(()=>{})  
+.catch(()=>{});  
+}  
+function testDiscordWebhook(){  
+const url=localStorage.getItem('brijer_discord_webhook');  
+if(!url){document.getElementById('discordStatus').textContent='Спочатку збережи вебхук.';return;}  
+sendDiscordReport();  
+document.getElementById('discordStatus').textContent='📨 Тестовий звіт відправлено (перевір канал Discord).';  
+}  
+function startDiscordReports(){  
+if(discordTimer)clearInterval(discordTimer);  
+discordTimer=setInterval(sendDiscordReport,60000);  
+}  
+  
+/* Старт */  
+loadGame();  
+update();  
+startDiscordReports();  
+if(!localStorage.getItem('brijer_discord_webhook')){  
+setTimeout(openDiscordSettings,500);  
+}  
+setInterval(()=>{  
+data.coins+=getIncomeMinute()/60;  
+update();  
+},1000);  
+</script>  </body>  
+</html>
